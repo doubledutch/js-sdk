@@ -1,0 +1,39 @@
+body {
+    width: 100%;
+    font-size: 72px;
+}
+
+#user {
+    background-color: #b9dfff;
+    width: 100%;
+    padding: 10px;
+}
+
+#user > div {
+    width: 100%;
+}
+
+#user-head {
+    display: block;
+    background-color: #b9dfff;
+    margin: 10px 0 10px 10px;
+}
+
+#user-text {
+    width: 60%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#user-text div {
+    background-color: #b9dfff;
+    width: 100%;
+}
+
+#user-image {
+    display: inline-block;
+    width: 35%;
+}
+#user-work {
+    color: #535353;
+}
