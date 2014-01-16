@@ -1,39 +1,45 @@
 body {
     width: 100%;
     font-size: 72px;
-}
-
-#user {
-    background-color: #b9dfff;
-    width: 100%;
     padding: 10px;
 }
 
-#user > div {
+#user, #event {
+    background-color: #b9dfff;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#user > div, #event > div {
     width: 100%;
 }
 
-#user-head {
+#user .head, #event .head {
     display: block;
     background-color: #b9dfff;
-    margin: 10px 0 10px 10px;
 }
 
-#user-text {
+#user .text, #event .text {
     width: 60%;
     display: inline-block;
     vertical-align: top;
 }
 
-#user-text div {
+#user .text div, #event .text div {
     background-color: #b9dfff;
     width: 100%;
 }
 
-#user-image {
+#user .image, #event .image {
     display: inline-block;
     width: 35%;
 }
+
 #user-work {
+    color: #535353;
+}
+
+#event-desc {
+    font-size: 48px;
     color: #535353;
 }
