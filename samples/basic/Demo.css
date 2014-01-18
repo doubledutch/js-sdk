@@ -1,12 +1,26 @@
+* {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
 body {
     width: 100%;
-    font-size: 72px;
+    font-size: 60px;
+    font-family: Arial, Verdana;
+    margin: 0px;
     padding: 10px;
+}
+
+#visit {
+    font-size: 20px;
+    margin-bottom: 10px;
 }
 
 #user, #event {
     background-color: #b9dfff;
     width: 100%;
+    padding: 10px;
     margin-bottom: 10px;
 }
 
