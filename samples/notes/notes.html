@@ -15,8 +15,6 @@
   </script>
 
 <script type='text/javascript'>//<![CDATA[ 
-$(window).load(function(){
-var defaultID = "#default";
 $(function () {
   resize();
   $(window).resize(resize);
@@ -24,12 +22,13 @@ $(function () {
   function resize() {
       $("#notes").height($(window).height() - ($("#main").height() - $("#notes").height()));
   }
+
   DD.Events.onReady(function () {
   DD.Events.getCurrentUserAsync(function (user) {
   DD.Events.getCurrentEventAsync(function (event) {
     var eventID = event.Id;
     var userID = user.UserId;
-    var identifier;
+    var prefix, identifier;
     
     loadSaved();
     
@@ -38,6 +37,7 @@ $(function () {
     var dirtyFlag = false;
     setInterval(saveNotes, 1000);
     $("#notes").bind("input propertychange", setDirtyFlag);
+    $("#all-notes").click(function() { alert(getAllNotes()) });
 
     function setDirtyFlag() {
         dirtyFlag = true;
@@ -51,12 +51,24 @@ $(function () {
     }
     
     function loadSaved() {
-        identifier = eventID + "/" + userID + (window.location.search || defaultID);
+        prefix = eventID + "/" + userID;
+        identifier = prefix + window.location.search;
         var notes = window.localStorage.getItem(identifier);
         $("#notes").val(notes);
     }
+
+    function getAllNotes() {
+        var allNotes = "NOTES:\n\n"
+        for ( var i = 0, len = localStorage.length; i < len; ++i ) {
+            var key = localStorage.key(i);
+            if (key.indexOf(prefix) === 0) {
+                var notes = localStorage.getItem(key);
+                allNotes += "---------------------------\n" + notes + "\n\n";
+            }
+        }
+        return allNotes;
+    }
   }); }); });
-});
 
 });//]]>  
 
@@ -70,7 +82,7 @@ $(function () {
       <h1>Notes</h1>
     </div>
     <textarea id="notes" class="form-control" rows="10"></textarea>
-    <!--<button type="button" class="btn btn-default">All Notes</button>-->
+    <button id="all-notes" type="button" class="btn btn-default">All Notes</button>
   </div>
 </body>
 
