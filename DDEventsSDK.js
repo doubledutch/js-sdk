@@ -1,8 +1,39 @@
-// Copyright © DoubleDutch 2014
+// Copyright Â© DoubleDutch 2015
 
 (function () {
   function throwNotInitialized() {
     throw new Error("DD Events SDK runtime not initialized");
+  }
+
+  // This is a simple queue to handle our calls into native code
+  // on the mobile apps. The problem is that the calls are async
+  // and we were using a single callback variable. If you made multiple
+  // calls to one of the APIs below before each had responded,
+  // the last callback passed would be the only one called, but
+  // with the result of all the previous calls
+  var CallbackQueue = function() {
+    var queue = []
+    var activeCallback = throwNotInitialized
+
+    this.callback = function() {
+      activeCallback.apply(undefined, arguments)
+      if (queue.length) {
+        var nextCall = queue.splice(0, 1)[0]
+        queue = nextCall[0]
+        nextCall[1].apply(undefined, arguments)
+      }
+    }
+
+    this.enqueue = function (callback, operation) {
+      if (queue.length) {
+        // Enqueue the request
+        queue.push([callback, operation])
+      } else {
+        // Nothing is queued - Go ahead and call it
+        activeCallback = callback
+        operation()
+      }
+    }
   }
 
   var onReadyCallbacks = [];
@@ -17,36 +48,53 @@
           setTimeout(callback, 1);
         }
       },
-      
+
       /// Get Current User
+      /// The implementation is set by the hosting native application
       getCurrentUserImplementation: throwNotInitialized,
+      _getCurrentUserQueue: new CallbackQueue(),
+      /// This async method is called by JS clients
       getCurrentUserAsync: function (callback) {
-        this.getCurrentUserCallback = callback;
-        this.getCurrentUserImplementation();
+        var self = this
+        this.getCurrentUserCallback = this._getCurrentUserQueue.callback
+        this._getCurrentUserQueue.enqueue(callback, function() { self.getCurrentUserImplementation() })
       },
 
       /// Get Current Event
+      /// The implementation is set by the hosting native application
       getCurrentEventImplementation: throwNotInitialized,
+      _getCurrentEventQueue: new CallbackQueue(),
+      /// This async method is called by JS clients
       getCurrentEventAsync: function (callback) {
-        this.getCurrentEventCallback = callback;
-        this.getCurrentEventImplementation();
+        var self = this
+        this.getCurrentEventCallback = this._getCurrentEventQueue.callback
+        this._getCurrentEventQueue.enqueue(callback, function() { self.getCurrentEventImplementation() })
       },
 
       /// Get OAuth Encoded API Call Implementation
+      /// The implementation is set by the hosting native application
       getSignedAPIImplementation: throwNotInitialized,
+      _getSignedAPIQueue: new CallbackQueue(),
+      /// This async method is called by JS clients
       getSignedAPIAsync: function (apiFragment, postBody, callback) {
-        this.getSignedAPICallback = callback;
-        this.getSignedAPIImplementation(apiFragment, postBody);
+        var self = this
+        this.getSignedAPICallback = this._getSignedAPIQueue.callback
+        this._getSignedAPIQueue.enqueue(callback, function() { self.getSignedAPIImplementation(apiFragment, postBody) })
       },
 
       /// Set an action button in the native app (if implemented)
+      /// The implementation is set by the hosting native application
       setActionButtonImplementation: throwNotInitialized,
+      _getActionButtonQueue: new CallbackQueue(),
+      /// This async method is called by JS clients
       setActionButtonAsync: function (title, imageReserved, callback) {
-        this.setActionButtonCallback = callback;
-        this.setActionButtonImplementation(title, imageReserved);
+        var self = this
+        this.getActionButtonCallback = this._getActionButtonQueue.callback
+        this._getActionButtonQueue.enqueue(callback, function() { self.getActionButtonImplementation(title, imageReserved) })
       },
 
       /// Set the title in the native app (if implemented)
+      /// The implementation is set by the hosting native application
       setTitleImplementation: throwNotInitialized,
       setTitleAsync: function (title) {
         this.setTitleImplementation(title);
