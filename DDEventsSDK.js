@@ -1,4 +1,4 @@
-// Copyright � DoubleDutch 2015
+// Copyright © DoubleDutch 2015
 
 (function () {
   function throwNotInitialized() {
