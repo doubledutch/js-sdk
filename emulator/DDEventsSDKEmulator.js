@@ -1,7 +1,14 @@
-// Copyright � DoubleDutch 2014
+﻿// Copyright © DoubleDutch 2015
 // DD Events SDK Emulator
 var sessionToken = "87a66c38-f1b6-45d6-a758-01fbfaa4c351";
-var currentUser = { FirstName: "Adam", LastName: "Liechty", Title: "Minion", Company: "DoubleDutch", ImageUrl: "https://s.gravatar.com/avatar/d3169d2b713b97c21d864ed1734d6852?s=160" };
+var currentUser = {
+  FirstName: "Jean",
+  LastName: "Valjean",
+  Title: "Character",
+  Company: "Les Misérables",
+  ImageUrl: "http://images.amcnetworks.com/bbcamerica.com/wp-content/blogs.dir/55/files/2012/12/Hugh-Jackman-Les-Miserables.jpg"
+  UserIdentifier: "24601"
+};
 $(function () {
   DD.Events.getCurrentUserImplementation = function () {
     this.getCurrentUserCallback(currentUser);
