@@ -116,4 +116,40 @@
   }, 25);
 
   window.DD = DD;
+
+  // OAuth2-compatible implementation for HTML5.
+  window.addEventListener("message", function(event)
+  {
+    var data = event.data;
+
+    DD.Events.setActionButtonImplementation = function() {};
+    DD.Events.setTitleImplementation = function(title) {
+      window.document.title = title;
+    };
+
+    if (data.user) {
+      var currentUser = data.user;
+      DD.Events.getCurrentUserImplementation = function() {
+        DD.Events.getCurrentUserCallback(currentUser);
+      };
+    }
+
+    if (data.event) {
+      var currentEvent = data.event;
+      DD.Events.getCurrentEventImplementation = function() {
+        DD.Events.getCurrentEventCallback(currentEvent);
+      };
+    }
+
+    if (data.authorizationHeader && data.apiRoot) {
+      var auth = data.authorizationHeader;
+      var apiRoot = data.apiRoot;
+
+      DD.Events.getSignedAPIImplementation = function(apiFragment, postBody) {
+        var url = apiRoot + apiFragment;
+        url += (url.indexOf('?') < 0 ? '?' : '&') + 'sdk=true';
+        DD.Events.getSignedAPICallback(url, auth);
+      };
+    }
+  }, false);
 })();
