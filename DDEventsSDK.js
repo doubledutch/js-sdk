@@ -14,24 +14,34 @@
   var CallbackQueue = function() {
     var queue = []
     var activeCallback = throwNotInitialized
+    var _callNext = null;
 
     this.callback = function() {
       activeCallback.apply(undefined, arguments)
-      if (queue.length) {
-        var nextCall = queue.splice(0, 1)[0]
-        queue = nextCall[0]
-        nextCall[1].apply(undefined, arguments)
-      }
+      
+      // Only drain the queue once we've called back
+      queue.splice(0, 1)
+      _callNext()
     }
 
     this.enqueue = function (callback, operation) {
+      // Always enqueue the request
+      var shouldExecute = queue.length === 0
+      queue.push([callback, operation])
+      
+      if (shouldExecute) {
+        setTimeout(function() {
+          this.callNext()
+        }.bind(this), 0)
+      }
+    }
+    
+    this.callNext = function() {
+      _callNext = this.callNext.bind(this)
       if (queue.length) {
-        // Enqueue the request
-        queue.push([callback, operation])
-      } else {
-        // Nothing is queued - Go ahead and call it
-        activeCallback = callback
-        operation()
+        var nextCall = queue[0]
+        activeCallback = nextCall[0]
+        nextCall[1].apply(undefined, arguments)
       }
     }
   }
