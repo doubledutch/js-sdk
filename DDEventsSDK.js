@@ -14,7 +14,7 @@
   var CallbackQueue = function() {
     var queue = []
     var activeCallback = throwNotInitialized
-    var _callNext = null
+    var _callNext = null;
 
     this.callback = function() {
       activeCallback.apply(undefined, arguments)
@@ -30,11 +30,11 @@
     }
     
     this.callNext = function() {
+      _callNext = this.callNext.bind(this)
       if (queue.length) {
         var nextCall = queue.splice(0, 1)[0]
         activeCallback = nextCall[0]
         nextCall[1].apply(undefined, arguments)
-        
       }
     }
   }
