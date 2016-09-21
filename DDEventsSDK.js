@@ -23,10 +23,14 @@
 
     this.enqueue = function (callback, operation) {
       // Always enqueue the request
+      var shouldExecute = queue.length === 0
       queue.push([callback, operation])
-      setTimeout(function() {
-        this.callNext()
-      }.bind(this), 0)
+      
+      if (shouldExecute) {
+        setTimeout(function() {
+          this.callNext()
+        }.bind(this), 0)
+      }
     }
     
     this.callNext = function() {
