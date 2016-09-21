@@ -14,11 +14,11 @@
   var CallbackQueue = function() {
     var queue = []
     var activeCallback = throwNotInitialized
+    var _callNext = null
 
     this.callback = function() {
-      alert(JSON.stringify(arguments))
       activeCallback.apply(undefined, arguments)
-      this.callNext()
+      _callNext()
     }
 
     this.enqueue = function (callback, operation) {
@@ -34,6 +34,7 @@
         var nextCall = queue.splice(0, 1)[0]
         activeCallback = nextCall[0]
         nextCall[1].apply(undefined, arguments)
+        
       }
     }
   }
