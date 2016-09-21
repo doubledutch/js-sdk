@@ -17,21 +17,22 @@
 
     this.callback = function() {
       activeCallback.apply(undefined, arguments)
-      if (queue.length) {
-        var nextCall = queue.splice(0, 1)[0]
-        queue = nextCall[0]
-        nextCall[1].apply(undefined, arguments)
-      }
+      this.callNext()
     }
 
     this.enqueue = function (callback, operation) {
+      // Always enqueue the request
+      queue.push([callback, operation])
+      setTimeout(function() {
+        this.callNext()
+      }.bind(this), 0)
+    }
+    
+    this.callNext = function() {
       if (queue.length) {
-        // Enqueue the request
-        queue.push([callback, operation])
-      } else {
-        // Nothing is queued - Go ahead and call it
-        activeCallback = callback
-        operation()
+        var nextCall = queue.splice(0, 1)[0]
+        activeCallback = nextCall[0]
+        nextCall[1].apply(undefined, arguments)
       }
     }
   }
