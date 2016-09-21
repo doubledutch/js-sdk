@@ -16,6 +16,7 @@
     var activeCallback = throwNotInitialized
 
     this.callback = function() {
+      alert(JSON.stringify(arguments))
       activeCallback.apply(undefined, arguments)
       this.callNext()
     }
