@@ -1,0 +1,65 @@
+<html>
+  <!--
+    This page allows forwarding from a Web View section to an external web page with
+    event and user context in the query string.
+    See https://github.com/doubledutch/doubledutch.github.io/blob/master/webview/index.md#redirect-with-context
+  -->
+  <head>
+    <script src="./DDEventsSDK.js"></script>
+    <script>
+window.onload = function() {
+  var redirect_uri = getQueryStringValue('redirect_uri');
+  DD.Events.onReady(function () {
+    DD.Events.getCurrentUserAsync(function(user) {
+      DD.Events.getCurrentEventAsync(function(event) {
+        DD.Events.getSignedAPIAsync("users/me/token", "", function (signedUrl, authHeader) {
+          if (signedUrl.toLowerCase().indexOf("applicationid=") < 0) {
+            signedUrl = signedUrl + "&applicationid=" + event.Id
+          }
+
+          var request = new XMLHttpRequest();
+          request.open('GET', signedUrl, true);
+          if (authHeader) request.setRequestHeader('Authorization', authHeader);
+          request.setRequestHeader('X-DDAPI-Version', '7.0.0.0');
+          request.onload = function() {
+            var token
+            if (this.status >= 200 && this.status < 400) {
+              var data;
+              try {
+                data = this.response ? JSON.parse(this.response) : this.response;
+              } catch (e) {
+                throw new Error('could not parse JSON: ' + this.response);
+              }
+              token = data.Value;
+              if (window.location.href.indexOf('https://') < 0) token = 'REDACTED_HTTPS_ONLY';
+            } else {
+              token = 'UNKNOWN_' + this.status
+            }
+
+            var resolved_uri = redirect_uri.replace(/\${user\.([^}]+)}/g, function(match, prop) {
+              return encodeURIComponent(user[prop]);
+            }).replace(/\${event\.([^}]+)}/g, function(match, prop) {
+              return encodeURIComponent(event[prop]);
+            }).replace(/\${token}/g, function(match) {
+              return encodeURIComponent(token);
+            });
+
+            window.location = resolved_uri
+          };
+          request.onerror = function() {
+            throw new Error('connection error');
+          };
+          request.send();
+        });
+      });
+    });
+  });
+  function getQueryStringValue (key) {  
+    return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + 
+      encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));  
+  }  
+};
+    </script>
+  </head>
+  <body style="font-size: 3em; font-family: sans-serif">Loading...</body>
+</html>
