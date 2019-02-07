@@ -1,0 +1,24 @@
+{
+  "name": "@doubledutch/js-sdk",
+  "version": "0.1.1",
+  "description": "Deprecated method of building custom HTML Web View sections built on the DoubleDutch Events Platform.",
+  "main": "DDEventsSDK.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doubledutch/js-sdk.git"
+  },
+  "keywords": [
+    "DoubleDutch",
+    "Javascript",
+    "SDK"
+  ],
+  "author": "Adam Liechty",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/doubledutch/js-sdk/issues"
+  },
+  "homepage": "https://github.com/doubledutch/js-sdk#readme"
+}
