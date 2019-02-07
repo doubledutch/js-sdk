@@ -158,6 +158,7 @@
       DD.Events.getSignedAPIImplementation = function(apiFragment, postBody) {
         var url = apiRoot + apiFragment;
         url += (url.indexOf('?') < 0 ? '?' : '&') + 'sdk=true';
+        if (data.event) url += '&applicationid=' + encodeURIComponent(data.event.Id);
         DD.Events.getSignedAPICallback(url, auth);
       };
     }
